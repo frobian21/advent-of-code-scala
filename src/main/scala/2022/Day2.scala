@@ -61,9 +61,9 @@ object Move:
     case result => Move.values.filter(_ != move1).filter(move2 => Result(move1, move2) == result).head
 
 
-object Day2Runner extends App {
-    val input =
-        """C Y
+@main def day2Run() = {
+    val input ="""
+C Y
 A Z
 B Y
 A Z
@@ -2564,6 +2564,6 @@ A X
 B X
 B Y
 """
-  println(Day2.getTotalScore(Day2.parseMoves(input)))
-  println(Day2.getTotalScore(Day2.parseMovesAndResults(input)))
+    println(Day2.getTotalScore(Day2.parseMoves(input)))
+    println(Day2.getTotalScore(Day2.parseMovesAndResults(input)))
 }

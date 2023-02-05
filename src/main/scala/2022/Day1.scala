@@ -24,7 +24,7 @@ case class Elf(calories: List[Int]) {
   val totalCalories: Int = calories.sum
 }
 
-object Day1Runner extends App {
+@main def day1Run() = {
     val input = 
         """6110
         2550
@@ -2277,7 +2277,7 @@ object Day1Runner extends App {
         5404
         """
 
-  println(Day1.getElfWithMostCalories(Day1.parseElfData(input)))
-  println(Day1.getTopElvesWithMostCalories(Day1.parseElfData(input), 3))
+    println(Day1.getElfWithMostCalories(Day1.parseElfData(input)))
+    println(Day1.getTopElvesWithMostCalories(Day1.parseElfData(input), 3))
 
 }

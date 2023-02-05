@@ -33,7 +33,7 @@ object Day4 {
     sets.count(anyOverlap)
 }
 
-object Day4Runner extends App {
+@main def day4Run() = {
   val input = """
 35-73,35-82
 9-27,10-80

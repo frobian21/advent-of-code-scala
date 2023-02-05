@@ -39,7 +39,7 @@ object Day3 {
 
 }
 
-object Day3Runner extends App {
+@main def day3Run() = {
   val input = """
 PcPlnShmrLmBnmcwBhrmcmbHNGFGpwdFFwGNjNbGqNHH
 tzQfRJfWZZztWzVtCTfRzFZjpFjNZjGLHbdHLDdjpb
