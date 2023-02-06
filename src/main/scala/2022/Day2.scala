@@ -1,7 +1,6 @@
 package `2022`
 
 import scala.util.matching.Regex
-import scala.util.matching.Regex.Match
 
 object Day2 {
 

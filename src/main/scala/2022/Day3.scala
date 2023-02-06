@@ -23,7 +23,7 @@ object Day3 {
   def getCommonBadges(rucksacks: Seq[(Set[Char], Set[Char])], parsedItems: Seq[Char] = Seq.empty[Char]): Seq[Char] =
     rucksacks match {
       case Seq(first, second, third, tail: _*) => getCommonBadges(tail,  parsedItems :+ getCommonBadge(first, second, third))
-      case _ => parsedItems 
+      case _ => parsedItems
   }
 
   val convertCharToInt: Char => Int = {
