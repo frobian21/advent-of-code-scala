@@ -19,7 +19,6 @@ object Day6 {
         case _ => isUnique(input, count + 1)
     else
       0
-    
 
 }
 
