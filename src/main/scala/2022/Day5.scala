@@ -7,8 +7,7 @@ case class Procedure(count: Int, from: Int, to: Int)
 object Day5 {
   def parseStacks(input: String): List[String] =
     val inputLines = input.split("\n\n").head.split("\n").filter(_.nonEmpty).map(_.toCharArray()).dropRight(1)
-    val output = List.tabulate(inputLines.head.length, inputLines.length)((i, j) => inputLines(j)(i))
-    output.grouped(4).map(_.tail.head).toList.map(_.mkString.trim())
+    inputLines.transpose.grouped(4).map(_.tail.head).toList.map(_.mkString.trim())
 
   def parseProcedures(input: String): List[Procedure] =
     val procedure: Regex = """move (\d+) from (\d+) to (\d+)""".r
