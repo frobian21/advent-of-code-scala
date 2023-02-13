@@ -50,6 +50,7 @@ class Day8Spec {
       inputParsed.flatten.map(_.visible),
       result.flatten.map(_.visible)
     )
+    assertArrayEquals(inputParsed.flatten.map(_.visible), Day8.getAllVisibleTreesFromEdge(Day8.parseGrid(testInput)).flatten)
   }
   @Test
   def t2(): Unit = {
@@ -95,7 +96,6 @@ class Day8Spec {
     )
     assertArrayEquals(expectedScenicScore.flatten, Day8.getScenicScore(grid).flatten)
     assertEquals(16, Day8.getMaxScenicScore(grid))
-    assertEquals(16, Day8.highestPotentialScenicScore(grid))
   }
 
 }

@@ -24,7 +24,7 @@ object Day8 {
     rowSweepLeft(maxHeight, currentTree)
 
   def mutableSweepRows(treeGrid: Array[Array[Tree]]): Unit =  
-    for (i <- 0 until treeGrid.length) yield
+    for (i <- treeGrid.indices) yield
       treeGrid(i).foldLeft(-1)(rowSweepLeft)
       treeGrid(i).foldRight(-1)(rowSweepRight)
   
@@ -39,7 +39,7 @@ object Day8 {
   def immutableUpdateRight(currentTree: (Int, Tree), maxHeight: (Int, Tree)): (Int, Tree) =
     immutableUpdateLeft(maxHeight, currentTree)
 
-  def sweepRows(treeGrid: Array[Array[Tree]]): Array[Array[Tree]] =
+  def immutableSweepRows(treeGrid: Array[Array[Tree]]): Array[Array[Tree]] =
     val default: (Int, Tree) = (-1, Tree(-1))
     treeGrid.map { _.map(x => (-1, x))
         .scanLeft(default)(immutableUpdateLeft)
@@ -47,18 +47,50 @@ object Day8 {
         .tail.init
         .map(_._2)
     }
-  
-  def getVisibleTreesRight(treeGrid: Array[Array[Tree]]): Array[Array[Int]] =
+    
+  def getVisibleTreesFromEdge(treeGrid: Array[Array[Tree]]): Array[Array[Boolean]] =
+    val default: (Int, Boolean) = (-1, false)
+    treeGrid.map(_.scanLeft(default){
+      case ((maxHeight, x), tree) => if tree.height > maxHeight then (tree.height, true) else (maxHeight, false)
+    }.tail.map(_._2))
+    
+  def getAllVisibleTreesFromEdge(treeGrid: Array[Array[Tree]]): Array[Array[Boolean]] =
+    def getVisibileTreesFromLeftEdge(treeGrid: Array[Array[Tree]]): Array[Array[Boolean]] =
+      getVisibleTreesFromEdge(treeGrid)
+    def getVisibileTreesFromRightEdge(treeGrid: Array[Array[Tree]]): Array[Array[Boolean]] =
+      getVisibleTreesFromEdge(treeGrid.map(_.reverse)).map(_.reverse)
+    def getVisibileTreesFromTopEdge(treeGrid: Array[Array[Tree]]): Array[Array[Boolean]] =
+      getVisibleTreesFromEdge(treeGrid.transpose).transpose
+    def getVisibileTreesFromBottomEdge(treeGrid: Array[Array[Tree]]): Array[Array[Boolean]] =
+      getVisibleTreesFromEdge(treeGrid.transpose.map(_.reverse)).map(_.reverse).transpose
+    implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+    val res = for
+      left <- Future(getVisibileTreesFromLeftEdge(treeGrid))
+      right <- Future(getVisibileTreesFromRightEdge(treeGrid))
+      down <- Future(getVisibileTreesFromTopEdge(treeGrid))
+      up <- Future(getVisibileTreesFromBottomEdge(treeGrid))
+    yield
+      Array(left, right, down, up).reduce((l, r) => l.zip(r).map((l, r) => l.zip(r).map(_ || _)))
+    Await.result(res, Duration.Inf)
+  def updateVisibility(treeGrid: Array[Array[Tree]]): Array[Array[Tree]] =
+    immutableSweepRows(immutableSweepRows(treeGrid).transpose).transpose
+  def countVisible(treeGrid: Array[Array[Tree]]): Int =
+    updateVisibility(treeGrid).flatten.count(_.visible)
+    
+  def getVisibleTrees(treeGrid: Array[Array[Tree]]): Array[Array[Int]] =
     treeGrid.map(row => row.zipWithIndex.map { (tree, index) => 
       val indexOfFirstItem = row.indexWhere(_.height >= tree.height, index + 1)
       if indexOfFirstItem != -1 then indexOfFirstItem - index else 1.max(row.length - index - 1)
     })
+  def getVisibleTreesRight(treeGrid: Array[Array[Tree]]): Array[Array[Int]] =
+    getVisibleTrees(treeGrid)
   def getVisibleTreesLeft(treeGrid: Array[Array[Tree]]): Array[Array[Int]] =
-    getVisibleTreesRight(treeGrid.map(_.reverse)).map(_.reverse)
+    getVisibleTrees(treeGrid.map(_.reverse)).map(_.reverse)
   def getVisibleTreesDown(treeGrid: Array[Array[Tree]]): Array[Array[Int]] =
-    getVisibleTreesRight(treeGrid.transpose).transpose
+    getVisibleTrees(treeGrid.transpose).transpose
   def getVisibleTreesUp(treeGrid: Array[Array[Tree]]): Array[Array[Int]] =
-    getVisibleTreesRight(treeGrid.transpose.map(_.reverse)).map(_.reverse).transpose
+    getVisibleTrees(treeGrid.transpose.map(_.reverse)).map(_.reverse).transpose
+
   def getScenicScore(treeGrid: Array[Array[Tree]]): Array[Array[Int]] =
     implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
     val res = for
@@ -67,23 +99,10 @@ object Day8 {
       down <- Future(getVisibleTreesDown(treeGrid))
       up <- Future(getVisibleTreesUp(treeGrid))
     yield
-      Array.tabulate(treeGrid.length, treeGrid(0).length)(
-        (i, j) => Array(left(i)(j), right(i)(j), down(i)(j),up(i)(j)).product
-      )
+      Array(left, right, down, up).reduce((l, r) => l.zip(r).map((l, r) => l.zip(r).map(_ * _)))
     Await.result(res, Duration.Inf)
   def getMaxScenicScore(treeGrid: Array[Array[Tree]]): Int =
     getScenicScore(treeGrid).flatten.max
-
-  def highestPotentialScenicScore(treeGrid: Array[Array[Tree]]): Int =
-    val getMaxScore : Int => Int = length =>
-      if length %2 == 1 then (length/2)*(length/2) else (length/2)*(length/2-1) 
-    getMaxScore(treeGrid.length) * getMaxScore(treeGrid(0).length)
-      
-  def updateVisibility(treeGrid: Array[Array[Tree]]): Array[Array[Tree]] =
-    sweepRows(sweepRows(treeGrid).transpose).transpose
-
-  def countVisible(treeGrid: Array[Array[Tree]]): Int =
-    updateVisibility(treeGrid).flatten.count(_.visible)
 }
 
 @main def day8Run() = {
