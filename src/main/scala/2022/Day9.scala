@@ -7,8 +7,18 @@ given Conversion[(Int, Int), Coordinate] = Coordinate.apply.tupled(_)
 case class Coordinate(x: Int, y: Int) {
   def + (c: Coordinate) = Coordinate(x + c.x, y + c.y)
   def - (c: Coordinate) = Coordinate(x - c.x, y- c.y)
-  def * (c: Int) = Coordinate(c * x, c * y)
+  def * (c: Int) = Coordinate(x * c, y * c)
+  def / (c: Int) = Coordinate(x / c, y / c)
+  lazy val isAdjacent = Coordinate.adjacentSet(this)
+  lazy val isDiagonal = Coordinate.diagonalSet(this)
+  lazy val isOrthogonal: Boolean = x == 0 || y == 0
+  override def toString(): String = f"($x, $y)" 
 }
+object Coordinate:
+  val unitVectorSet = Set[Coordinate]((1, 0), (0, 1), (-1, 0), (0, -1))
+  val diagonalSet = Set[Coordinate]((1,1), (1,-1), (-1, 1), (-1, -1))
+  val adjacentSet = unitVectorSet ++ diagonalSet ++ Set(Coordinate(0, 0))
+end Coordinate
 
 enum RopeMove(val unitVector: Coordinate):
   val steps: Int
@@ -20,7 +30,7 @@ enum RopeMove(val unitVector: Coordinate):
 end RopeMove
 
 object RopeMove:
-  val moveRegex = "([LRUD]) (\\d+)".r
+  val moveRegex = "([LRUD]) (\\d+)$".r
 end RopeMove
 
 object Day9 {
@@ -37,6 +47,20 @@ object Day9 {
   
   def applyAllHeadMoves(moves: Array[RopeMove]): Array[Coordinate] =
     moves.foldLeft(Array(Coordinate(0,0)))(moveRopeHead)
+
+  def moveRopeTail(ropeTail: Array[Coordinate], ropeHead: Array[Coordinate]): Array[Coordinate] =
+    ropeHead match
+      case Array(step, nextStep) if !(nextStep - ropeTail.last).isAdjacent && (nextStep - step).isDiagonal && (nextStep - ropeTail.last).isOrthogonal =>
+        ropeTail :+ ropeTail.last + ((nextStep - ropeTail.last) / 2)
+      case Array(step, nextStep) if !(nextStep - ropeTail.last).isAdjacent && (nextStep - step).isDiagonal =>
+        ropeTail :+ ropeTail.last + nextStep - step
+      case Array(step, nextStep) if !(nextStep - ropeTail.last).isAdjacent => ropeTail :+ step
+      case _ => ropeTail
+
+  @scala.annotation.tailrec
+  def applyAllTailMoves(headMoves: Array[Coordinate], count: Int = 1): Array[Coordinate] =
+    val tailMoves = headMoves.sliding(2, 1).foldLeft(Array(Coordinate(0,0)))(moveRopeTail)
+    if count <= 1 then tailMoves else applyAllTailMoves(tailMoves, count - 1)
 }
 
 @main def day9Run() = {
@@ -2042,4 +2066,7 @@ L 4
 U 18
 L 9
 """
+  val inputParsed = Day9.parseRopeMoves(input)
+  println(Day9.applyAllTailMoves(Day9.applyAllHeadMoves(inputParsed)).toSet.size)
+  println(Day9.applyAllTailMoves(Day9.applyAllHeadMoves(inputParsed), 9).toSet.size)
 }
