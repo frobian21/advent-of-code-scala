@@ -18,6 +18,6 @@ New scala enums are cool. But sometimes the extensibility is a bit annoying. For
 
 Scalatest has much nicer handling when it comes to matching lists. This is very apparant in scala3 where the `: _*` infix operator has been removed. This means you cannot decompose a list to pass as varargs to AssertContainsInOrder - which has signature `(Any, Any, Any*)` ... I couldn't figure out how to decompose into an `Any*`.
 
-##TODO:
+## TODO:
 
 Try to implement a solution with ZIO
