@@ -11,3 +11,5 @@ For more information on the sbt-dotty plugin, see the
 
 Try installing Metals, Bloop and Coursier.
 Bloop can compile test and run too. 
+
+Notes:
