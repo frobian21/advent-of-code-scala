@@ -1,5 +1,7 @@
 {
     "files.watcherExclude": {
         "**/target": true
-    }
+    },
+    "editor.fontFamily": "",
+    "editor.fontSize": 14
 }
