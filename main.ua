@@ -2,14 +2,20 @@
 $ 7 6 4 2 1
 $ 1 2 7 8 9
 $ 9 7 6 2 1
-$ 1 3 2 4 5
+$ 1 3 2 
 $ 8 6 4 4 1
 $ 8 8 8 8 8
 $ 1 3 6 7 9
-Prs     ← ⍚(⊜⋕⊸≠@ )⊜□⊸≠@\n
-IsValid ← ≡°□××⊃(≠₀⍚⊢±|=₁⍚/+⍚◰±|¬⍚/↥>₃⌵)⍚(≡/-◫₂)
-P₁      ← ⧻⊚IsValid
-P₂      ← /+≡(/↥≡(IsValid°□))⍚(≡▽¬⊞=.⇡⧻⟜¤)
+Prs ← ⊜(□⊜⋕⊸≠@ )⊸≠@\n # Parse input - boxed due to different lengths
+# Are differences all same direction and within bounds
+IsValid ← (
+  /↧↧⊃(≍⟜↻₁±|≥₁≤₃)≡/-◫₂
+)
+P₁ ← $PartOne ⧻⊚≡◇IsValid # Part One - How many are valid
+# Part Two - How many are valid with one char less
+P₂ ← (
+  $PartTwo ⧻⊚≡◇(/↥≡IsValid ≡▽⊙¤⊞≠.°⊏)
+)
 ⊃P₂P₁ Prs
 $ 22 25 27 28 30 31 32 29
 $ 72 74 75 77 80 81 81
