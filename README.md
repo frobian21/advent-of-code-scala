@@ -21,8 +21,3 @@ Scalatest has much nicer handling when it comes to matching lists. This is very 
 ## TODO:
 
 Try to implement a solution with ZIO
-
-## 2024 - uiua project.
-- `rustup update stable`
-- `cargo install uiua`
-- `uiua init`
