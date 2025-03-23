@@ -1,15 +1,14 @@
-# Experimental!
 $ 7 6 4 2 1
 $ 1 2 7 8 9
 $ 9 7 6 2 1
-$ 1 3 2 
+$ 1 3 2
 $ 8 6 4 4 1
 $ 8 8 8 8 8
 $ 1 3 6 7 9
 Prs ← ⊜(□⊜⋕⊸≠@ )⊸≠@\n # Parse input - boxed due to different lengths
 # Are differences all same direction and within bounds
 IsValid ← (
-  /↧↧⊃(≍⟜↻₁±|≥₁≤₃)≡/-◫₂
+  /↧↧⊃(≍⟜↻₁±|≥₁≤₃)≡/-⧈∘2
 )
 P₁ ← $PartOne ⧻⊚≡◇IsValid # Part One - How many are valid
 # Part Two - How many are valid with one char less

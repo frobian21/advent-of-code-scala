@@ -1,4 +1,3 @@
-# Experimental!
 $ 47|53
 $ 97|13
 $ 97|61
@@ -27,35 +26,51 @@ $ 75,29,13
 $ 75,97,47,61,53
 $ 61,13,29
 $ 97,13,75,29,47
-
+Input ←
 Parse ← (
   °□₂⊜(□⊜□⊸≠@\n)¬⊸⦷"\n\n"
   ⊓≡◇(⊜⋕⊸≠@|)⍚(⊜⋕⊸≠@,))
-ValidRows ← ≡°□⍚(/↧≡/>▽¬≡/↥⊸⌕⧻,⊸⍜∩♭⊗:):¤
+ValidRows ← ≡°□⍚(/↧≡/>▽¬≡/↥⊸⌕⧻⤙⊸⍜∩♭⊗:):¤
 SumMiddle ← ≡◇(⊡⌊÷₂⊸⧻)
-Part₁     ← × SumMiddle ValidRows Parse
 SortRow ← ⍚(
-  ▽¬≡/↥⊸⌕⧻,⊸⍜∩♭⊗:
+  ▽¬≡/↥⊸⌕⧻⤙⊸⍜∩♭⊗:
   ⊙°⊏⍜≡⇌⍆▽¬⊸≡/>
-  ⋅⊏⍥(:⍜▽⇌⊸∈⊙:°⊂)⊸⧻
+  ⋅⊏⍥(:⍜▽⇌⊸∊⊙:°⊂)⊸⧻
 )
-Part₂ ← SumMiddle SortRow :¤⊙(▽¬)⟜ValidRows Parse
-⊃Part₁Part₂
-
+┌─╴Tests
+  ⍤⤙≍ 143 /+SumMiddle ×ValidRows Parse Input
+  ⍤⤙≍ 123 /+SumMiddle SortRow ⊙¤▽¬⤚ValidRows Parse Input
+└─╴
 # Updates Rules ? Input
 Parse ← (
   :°□₂⊜(□⊜□⊸≠@\n)¬⊸⦷"\n\n"
   ⊓⍚(⊜⋕⊸≠@,)(⍉≡◇(⊜⋕⊸≠@|))
 )
-IsCorrect    ← /×/≥≡⬚W⊗:¤
-Dependencies ← ⧻⋅⊙◌⍥(
-  ⊃(⊏⊚∈⊙⋅°⊟)⋅⊙∘? # Select dependents
-  ⟜(◴⊂)          # Aggregate
-)∞ ⊙[]
+IsCorrect     ← /×/≥≡⬚W⊗:¤
+GetDependents ← ∩◴⟜⊂⊙◌◡(▽∊⊙⋅°⊟)
+Dependencies  ← ⧻⋅⊙◌⍥GetDependents∞ ⊙[]
 TopoSort ← (
-  ⟜(≡▽¤ ⊸(∈⊙⊢))    # Remove unused rules (important!)
-  ⟜≡Dependencies⊙¤ # Count dependencies
-  ⊏⍖:              # Sort
+  ⟜(¤≡▽¤/×⊸∊)      # Remove unused rules (important!)
+  ⊏⍖⤚≡Dependencies # Count dependencies then sort
 )
-Part₁ ← /+×≡◇⊃(⊡⌊÷2⊸⧻|IsCorrect)⊙¤ Parse
-Part₂ ← /+≡◇(⊡⌊÷2⊸⧻TopoSort)▽¬◡≡◇IsCorrect ⊙¤ Parse
+Part₁ ← /+×≡◇⊃(⊡⌊÷₂⊸⧻|IsCorrect) ⊙¤ Parse
+Part₂ ← /+≡◇(⊡⌊÷₂⊸⧻TopoSort)▽¬◡≡◇IsCorrect ⊙¤ Parse
+
+┌─╴Tests₂
+  ⍤⤙≍ 143 Part₁ Input
+  ⍤⤙≍ 123 Part₂ Input
+└─╴
+
+FilterRules ← ⟜(≡▽¤/×⊸∊) # Remove rules which are not applicable
+Middles     ← ≡◇(⊡⌊÷₂⊸⧻) # Get the middle value
+SortByRules ← ⊏⤚(⍖∊:⊙⍉⊞⊟.) # Sort by the rules.
+# Apply sorting rules to input sequences
+# Returns an array with two values
+# The sum of the middle value where input was sorted
+# The sum of the middle values where input was not sorted
+# 43 characters.
+Solve ← ⊕/+⊃=Middles ⤚⍚(SortByRules FilterRules)⊙¤
+
+┌─╴Tests₃
+  ⍤⤙≍ 123_143 Solve Parse Input
+└─╴
